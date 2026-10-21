@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>資產證券化 250題完整刷題與單字卡系統</title>
+<style>
+    :root {
+        --primary: #1e3a8a;
+        --primary-light: #eff6ff;
+        --accent: #f59e0b;
+        --success: #10b981;
+        --danger: #ef4444;
+        --bg: #f8fafc;
+        --card: #ffffff;
+        --text: #1e293b;
+        --muted: #64748b;
+    }
+    * { box-sizing: border-box; }
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        background-color: var(--bg);
+        color: var(--text);
+        margin: 0;
+        padding: 15px;
+        display: flex;
+        justify-content: center;
+    }
+    .app {
+        max-width: 680px;
+        width: 100%;
+        background: var(--card);
+        border-radius: 16px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.06);
+        padding: 22px;
+    }
+    header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 2px solid #e2e8f0;
+        padding-bottom: 12px;
+        margin-bottom: 15px;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    h1 {
+        font-size: 1.25rem;
+        color: var(--primary);
+        margin: 0;
+    }
+    .mode-switch {
+        display: flex;
+        background: #e2e8f0;
+        border-radius: 8px;
+        padding: 3px;
+    }
+    .mode-btn {
+        border: none;
+        background: transparent;
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        cursor: pointer;
+        color: var(--muted);
+    }
+    .mode-btn.active {
+        background: var(--card);
+        color: var(--primary);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+    }
+    .controls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 15px;
+        align-items: center;
+        justify-content: space-between;
+    }
+    select, input[type="number"], .tool-btn {
+        padding: 7px 10px;
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        background: #fff;
+        color: var(--text);
+    }
+    .tool-btn {
+        cursor: pointer;
+        font-weight: 500;
+        transition: 0.2s;
+    }
+    .tool-btn:hover { background: #f1f5f9; }
+    .tool-btn.active-toggle {
+        background: var(--primary-light);
+        border-color: var(--primary);
+        color: var(--primary);
+    }
+    .status-bar {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.85rem;
+        color: var(--muted);
+        margin-bottom: 8px;
+        font-weight: 600;
+    }
+    .progress-track {
+        height: 6px;
+        background: #e2e8f0;
+        border-radius: 99px;
+        overflow: hidden;
+        margin-bottom: 18px;
+    }
+    .progress-fill {
+        height: 100%;
+        background: var(--primary);
+        width: 0%;
+        transition: width 0.3s;
+    }
+    .tag {
+        display: inline-block;
+        background: var(--primary-light);
+        color: var(--primary);
+        font-size: 0.8rem;
+        font-weight: 700;
+        padding: 3px 10px;
+        border-radius: 99px;
+        margin-bottom: 10px;
+    }
+    .q-title {
+        font-size: 1.15rem;
+        font-weight: 700;
+        line-height: 1.5;
+        margin-bottom: 18px;
+    }
+    .options {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+    .opt-btn {
+        text-align: left;
+        padding: 13px 15px;
+        border: 2px solid #e2e8f0;
+        border-radius: 10px;
+        background: #fff;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: 0.15s;
+        color: var(--text);
+        line-height: 1.4;
+    }
+    .opt-btn:hover:not(:disabled) {
+        border-color: var(--primary);
+        background: var(--primary-light);
+    }
+    .opt-btn.correct {
+        border-color: var(--success);
+        background: #ecfdf5;
+        color: #065f46;
+        font-weight: 700;
+    }
+    .opt-btn.wrong {
+        border-color: var(--danger);
+        background: #fef2f2;
+        color: #991b1b;
+    }
+    .feedback {
+        margin-top: 15px;
+        padding: 12px 15px;
+        border-radius: 10px;
+        background: #f8fafc;
+        border-left: 4px solid var(--primary);
+        font-size: 0.92rem;
+        display: none;
+    }
+    /* Flashcard Mode */
+    .flashcard {
+        border: 2px solid #cbd5e1;
+        border-radius: 14px;
+        min-height: 210px;
+        padding: 25px 20px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        cursor: pointer;
+        background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+        transition: transform 0.2s, box-shadow 0.2s;
+        user-select: none;
+    }
+    .flashcard:hover {
+        box-shadow: 0 6px 16px rgba(0,0,0,0.06);
+        border-color: var(--primary);
+    }
+    .fc-topic {
+        font-size: 1.4rem;
+        font-weight: 800;
+        color: var(--primary);
+        margin-bottom: 10px;
+    }
+    .fc-q {
+        font-size: 1rem;
+        color: var(--muted);
+        margin-bottom: 15px;
+    }
+    .fc-ans {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #065f46;
+        background: #ecfdf5;
+        padding: 12px 18px;
+        border-radius: 10px;
+        border: 1px solid #a7f3d0;
+        display: none;
+        margin-top: 8px;
+    }
+    .fc-hint {
+        font-size: 0.8rem;
+        color: #94a3b8;
+        margin-top: 14px;
+    }
+    .nav-bar {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+    }
+    .nav-btn {
+        flex: 1;
+        padding: 12px;
+        border: none;
+        border-radius: 10px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+    .btn-prev { background: #e2e8f0; color: var(--text); }
+    .btn-next { background: var(--primary); color: #fff; }
+    .btn-MarkWrong { background: #fee2e2; color: #991b1b; }
+    .btn-MarkRight { background: #d1fae5; color: #065f46; }
+    .footer-note {
+        text-align: center;
+        font-size: 0.78rem;
+        color: #94a3b8;
+        margin-top: 15px;
+    }
+</style>
+</head>
+<body>
+
+<div class="app">
+    <header>
+        <h1>📚 資產證券化 250題題庫</h1>
+        <div class="mode-switch">
+            <button class="mode-btn active" id="mode-quiz" onclick="setMode('quiz')">📝 刷題測驗</button>
+            <button class="mode-btn" id="mode-card" onclick="setMode('card')">🗂️ 單字卡背誦</button>
+        </div>
+    </header>
+
+    <div class="controls">
+        <select id="chapter-select" onchange="filterQuestions()">
+            <option value="all">全部題目 (第 1 - 250 題)</option>
+            <option value="ch1">基礎與法規 (第 1 - 65 題)</option>
+            <option value="ch2">房貸與 MBS (第 66 - 150 題)</option>
+            <option value="ch3">汽車 ABS (第 151 - 200 題)</option>
+            <option value="ch4">信用卡 ABS (第 201 - 250 題)</option>
+            <option value="wrong">📕 錯題本 / 待加強 (0)</option>
+        </select>
+
+        <div style="display:flex; gap:6px; align-items:center;">
+            <button class="tool-btn" id="btn-shuffle" onclick="toggleShuffle()">🔀 隨機</button>
+            <button class="tool-btn active-toggle" id="btn-auto" onclick="toggleAutoNext()">⚡ 答對自動下一題</button>
+            <input type="number" id="jump-input" min="1" max="250" placeholder="題號" style="width:65px;" onchange="jumpToQuestion(this.value)">
+        </div>
+    </div>
+
+    <div class="status-bar">
+        <span id="progress-text">第 1 / 250 題</span>
+        <span id="score-text">答對: 0 | 錯題本: 0 題</span>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+
+    <!-- 刷題模式介面 -->
+    <div id="quiz-view">
+        <span class="tag" id="q-tag">基礎與法規</span>
+        <div class="q-title" id="q-title">載入中...</div>
+        <div class="options" id="opt-box"></div>
+        <div class="feedback" id="feedback-box"></div>
+        <div class="nav-bar">
+            <button class="nav-btn btn-prev" onclick="prevQ()">⬅️ 上一題</button>
+            <button class="nav-btn btn-next" onclick="nextQ()">下一題 ➡️</button>
+        </div>
+    </div>
+
+    <!-- 單字卡模式介面 -->
+    <div id="card-view" style="display:none;">
+        <div class="flashcard" onclick="flipCard()">
+            <span class="tag" id="fc-tag">基礎與法規</span>
+            <div class="fc-topic" id="fc-topic">考點主題</div>
+            <div class="fc-q" id="fc-q">題目敘述</div>
+            <div class="fc-ans" id="fc-ans">正確答案內容</div>
+            <div class="fc-hint" id="fc-hint">👆 點擊卡片翻面看正確定義（或按空白鍵）</div>
+        </div>
+        <div class="nav-bar">
+            <button class="nav-btn btn-prev" onclick="prevQ()">⬅️ 上一張</button>
+            <button class="nav-btn btn-MarkWrong" onclick="markCard(false)">😰 還不熟 (收錄錯題)</button>
+            <button class="nav-btn btn-MarkRight" onclick="markCard(true)">😎 記住了 (下一張)</button>
+        </div>
+    </div>
+
+    <div class="footer-note">
+        💡 鍵盤快捷鍵：數字鍵 1~4 選答案 ｜ 左右方向鍵 切換題目 ｜ 空白鍵 翻卡或下一題
+    </div>
+</div>
+
+<script>
+// 127組核心題庫母體 [主題, 選項A, 選項B, 選項C, 選項D, 正確索引]
+const rawBase = `資產證券化定義|將可產生現金流量的資產重新包裝並發行證券|直接發行普通股以籌資|將現金存入定期存款|僅以公司信用發行無擔保債券|0
+基礎資產|資產必須是上市股票|具有可預測現金流量的資產較適合證券化|資產只能是不動產|完全沒有現金流量的資產最適合|1
+真實出售|保證資產永不違約|使創始機構一定不再提供服務|使資產與創始機構破產風險有效隔離|確保證券報酬率固定|2
+特殊目的機構|保證所有借款人按時還款|取代中央銀行執行貨幣政策|專責核發銀行營業執照|承接資產並進行風險隔離|3
+SPV形式|SPV必須是自然人|SPV僅能是上市公司|SPV不得持有金融資產|特殊目的信託可作為SPV形式之一|3
+轉付證券|僅在公司清算時付款|投資人只能取得股利|一律保證固定到期本金|依約定比例將資產池本息轉付投資人|3
+支付證券|不允許發行次順位證券|禁止設計不同類組|可依順位及到期特性重新安排現金流量|一定依每筆貸款原比例轉付|2
+Tranche|把資產全部轉為現金|使所有投資人承擔完全相同風險|取消信用評等需求|將同一資產池分成不同風險與支付順位|3
+信用評等|著重基礎資產品質及交易結構|與現金流量無關|僅看創始機構的商標|只由證券名稱決定|0
+外部信用增強|優先次順位結構|超額擔保|第三方保證或銀行信用狀|超額利差|2
+內部信用增強|銀行信用狀|外部保證契約|第三方保險|優先次順位結構|3
+超額擔保|資產池金額小於證券本金|發行人必須有兩家銀行|資產池利率必須為零|資產池金額大於所發行證券本金|3
+超額利差|票面利率加違約率|資產收益扣除證券利息與相關費用後的餘額|銀行存款減股東權益|發行證券本金減資產本金|1
+流動性增強|提高借款人的信用評分|緩和資產現金流入與證券支付時點不一致|消除所有信用損失|保證房價上漲|1
+創始機構|僅負責公開市場交易|原持有資產並發起證券化交易|只能擔任信用評等機構|僅負責外匯結算|1
+服務機構|保證所有ABS 價格上漲|制定貨幣政策|專門發行國庫券|收取貸款本息並管理帳務|3
+安排機構|負責每位借款人的消費決策|決定中央銀行利率|必然持有全部次順位證券|協助交易架構設計與證券承銷|3
+證券化的利益|必然消除所有金融風險|增加資產流動性並分散融資來源|必然提高資產違約率|禁止投資人分散投資|1
+風險保留|流動性承諾不可能形成或有負債|出售資產後風險必然完全消失|服務機構永不承擔聲譽風險|創始機構保留次順位證券仍可能承擔信用風險|3
+ABS與公司債|ABS只能由政府發行|ABS還款主要依賴資產池現金流量|公司債必須有數千筆貸款支持|ABS一定沒有提前還本風險|1
+台灣金融資產證券化條例|於2002年制定|於2015年制定|於1970年制定|於1985年制定|0
+台灣不動產證券化條例|於2025年制定|於2003年制定|於1975年制定|於1990年制定|1
+證券化雙軌制度|可採特殊目的信託或特殊目的公司|不得使用信託|只能採合夥企業|只能由中央銀行直接發行|0
+SPT|特殊目的信託由受託機構持有並管理信託資產|不得發行受益證券|必須是自然人|與資產隔離完全無關|0
+SPC|必須同時經營一般零售業|不需要任何法律架構|特殊目的公司為承接證券化資產而設立|不得發行證券|2
+對抗第三人|只要口頭約定即一律對抗所有人|不涉及創始機構債權人|等同保證資產不會違約|資產移轉依規定公告或登記可強化對第三人的效力|3
+申報生效|每案均須法院判決|等同免除所有資訊揭露|必須先由投資人全數同意|符合規定且期限屆滿可依法生效|3
+公開募集|可完全不揭露風險|只能發行一張證券|通常須遵循較完整的資訊揭露規範|不得有個人投資人|2
+信用評等機構|保證市場交易價格|決定房貸的法定利率|代替借款人繳納本息|評估證券化商品的信用風險|3
+受益人會議|為受益人集體行使權利的機制之一|負責核定全國稅率|代替借款人選擇房屋|保證所有證券獲利|0
+台灣首宗金融資產證券化|第一件必然是信用卡 ABS|台灣工銀 CLO於2003年發行|第一件必然是住宅 REIT|台灣工銀CLO於1980年發行|1
+信用狀增強限制|信用狀提供者的信用狀況會影響增強效果|信用狀等同超額利差|信用狀可完全消除市場利率風險|任何信用狀均能保證 AAA|0
+抵押貸款|只有保險契約沒有貸款|只有股權沒有債權|同時涉及債權與不動產擔保權|完全不涉及借款人付款|2
+所有權理論|借款人永遠不需還款|與違約處置程序無關|抵押權必須是股票|貸款人對抵押物具有較強法律權利|3
+留置權理論|借款人不能居住房屋|借款人保有所有權而貸款人持有擔保權|抵押物不必存在|貸款人自動取得借款人所有財產|1
+Jumbo Loan|必定為無擔保貸款|貸款金額高於適用合格貸款額度門檻|貸款期限必定小於一年|一定由政府保證|1
+固定利率房貸|契約利率在約定期間內固定|每月利率都依市場重設|借款人完全沒有提前還款可能|本金一律到期才還|0
+ARM|只按房屋面積計息|完全不受市場利率影響|利率永久固定|契約利率依指標利率與加碼調整|3
+Margin|房屋的出售價格|借款人的頭期款|提前還款本金|ARM 指標利率上的固定加碼|3
+Teaser Rate|固定不變的法定稅率|初期提供較低的誘因利率|到期一次償還本金|違約後罰金|1
+CPM|每期總付款固定但本息比重變動|每期本金固定且總付款下降|每期本金與利息都固定|只支付利息直到到期|0
+CAM|每期攤還固定本金|每期總付款固定|完全不攤還本金|每期利息固定且本金不變|0
+CIM|不支付任何利息|期間支付利息而本金到期一次清償|每期總付款完全相同且逐期攤還|每期固定攤還本金|1
+CAM曝險|本金隨時間必然增加|本金回收較快使貸款餘額下降較快|本金永遠不下降|本金只在到期日清償|1
+負攤還|提前全額清償|每期本金償還額增加|貸款利率降為零|當期付款低於應計利息使未付利息加入本金|3
+GPM|付款額初期較低而後逐步提高|本金永不償還|貸款機構分享全部房價|只適用信用卡循環帳款|0
+SAM|利率必須每週調整|本金必須一次付清|貸款機構可分享房價增值收益|貸款機構每月向借款人發年金|2
+RAM|貸款餘額一定逐年減少|僅供汽車經銷商使用|每月固定向銀行存款|屋主以住宅權益取得貸款機構支付的款項|3
+Recasting|取消借款人全部債務|立即出售所有證券|將貸款轉為普通股|重新安排房貸剩餘付款條件|3
+Foreclosure|透過法律程序處分抵押資產以回收債權|借款人自願加碼投資|自動免除所有債務|證券化信用評等上調|0
+Option ARM|允許借款人依契約選擇不同付款方式|不允許最低付款|只有一種固定付款方式|一定不會負攤還|0
+最低付款 Option ARM|一定最快還清本金|永遠不需付利息|可能產生負攤還與後續付款衝擊|保證貸款餘額逐月下降|2
+純利息付款|期間僅支付利息而未攤還本金|貸款本金立刻歸零|當期不需支付利息|每期本金必定相同|0
+MBS|只能由汽車貸款支持|以普通股股利唯一支持的證券|以抵押貸款現金流量支持的證券|完全不涉及提前清償|2
+MPT|抵押貸款本息經服務費等調整後轉付投資人|僅以發行公司一般信用付款|投資人不承擔現金流變動|每年發行新股票|0
+提前清償風險|借款人提前還款使預期現金流時間改變|房屋一定增值|證券票面利率必然上升|所有借款人一定違約|0
+CPR|衡量有條件的年度提前清償速度|衡量房屋面積|衡量公司股票殖利率|衡量證券的信用評等|0
+PSA|銀行資本適足率公式|用於描述房貸提前清償速度的基準模型|汽車折舊率法規|信用卡盜刷率標準|1
+再投資風險|提前回收本金可能需以較低利率再投資|市場利率不再變動|保證獲得較高報酬|借款人信用一定改善|0
+負凸性|利率下降一定使MBS 無限上漲|提前還款不影響價格|價格對利率永遠線性|利率下降時提前還款增加可能限制 MBS 漲幅|3
+MBB|不能設定任何到期日|抵押貸款作為債券擔保品而非直接轉付全部現金流|與MPT必然完全相同|只能以信用卡應收帳款擔保|1
+CMO|重新分配抵押貸款本金現金流的不同類組|將房貸改為普通股|只能發行一種受益權|取消所有房貸違約風險|0
+CMO 到期日|到期日由借款人任意更改|所有CMO 都沒有到期日|法定到期日不等於實際平均本金回收時間|各類組本金必定同日回收|2
+WAL|以本金回收額加權的平均回收時間|以利息支付額計算信用評等|資產池最大房屋面積|票面利率的加權平均|0
+Z-bond|在特定期間遞延領取利息並累積本金|一定是第一損失證券|每期只領本金不領利息|必須由信用卡資產支持|0
+IO (10)|只取得本金|只取得公司股利|只取得房屋租金|主要取得房貸利息現金流|3
+PO|只取得外匯價差|只取得銀行服務費|只取得房貸利息|主要取得房貸本金現金流|3
+IO利率下降|提前清償增加通常不利IO價值|保證本金增加|保證利息現金流增加|完全不影響IO現金流|0
+PO利率下降|必然減少本金回收|與提前清償完全無關|保證PO價值歸零|提前收回本金通常有利PO價值|3
+IO與PO合計|一定高於原 MBS十倍|與原MBS 毫無關聯|在相同權利與現金流條件下合計價值應對應原 MBS|一定低於原 MBS九成|2
+次貸危機|與房價變動無關|只因股票交易手續費過高|授信品質惡化與複雜證券化結構共同放大風險|只因車貸利率固定|2
+車貸攤還|車貸只能一次付清|本金永遠不變|本金一定每月增加|汽車貸款本金通常隨每期付款下降|3
+車輛折舊|車輛折舊可消除信用風險|車價永遠上升|擔保品價值快速下降可能提高違約損失|折舊等同信用增強|2
+車貸期限|通常固定為50年|沒有任何契約期限|一定超過房貸期限|通常短於住宅房貸|3
+二手車貸|必然由政府保證|必然沒有信用風險|利率通常高於新車貸款|利率一定為零|2
+Recovery Rate|證券發行費用率|汽車製造成本率|借款人預期所得成長率|違約後可回收的債權比率|3
+車貸資產池|不得包含分期付款契約|大量小額且相對標準化的車貸適合組成資產池|只能放入一筆貸款|必須全部是股票|1
+專屬融資公司|可透過證券化取得資金並支持汽車銷售|主要負責房地產登記|只能發行政府公債|禁止提供汽車融資|0
+獨立融資公司|必然擁有中央銀行存款創造權|不得移轉貸款債權|不需任何資金來源|可透過證券化降低對傳統資金來源的依賴|3
+汽車ABS流程|借款人直接發行政府公債|汽車廠商將車輛移轉給央行|投資人向借款人發行股票|創始機構移轉車貸予SPV 再發行 ABS|3
+轉付架構|不涉及資產池現金流|必須先發行普通股|任意改變借款人債務|依約定比例將車貸本息轉付投資人|3
+支付架構|不能設計到期特性|投資人一律同比例領款|禁止現金流重新安排|可依類組設計不同支付順位|3
+車貸違約與景氣|景氣與信用風險永遠無關|所有車貸由政府全額承保|失業率上升必然降低違約|經濟衰退通常可能提高車貸違約機率|3
+頭期款|頭期款越高違約必然越高|頭期款只影響股價|頭期款與借款人負債無關|較高頭期款通常可降低違約風險|3
+授信審查|授信審查只影響汽車顏色|較嚴格的授信審查通常有助降低違約風險|審查可消除所有系統性風險|審查越嚴格違約必然增加|1
+硬式信用增強|完全沒有資金支持|只能以預期車價上漲支應|現金準備帳戶提供較明確損失吸收資源|僅依賴未來超額利差|2
+軟式信用增強|等同政府保證|不受違約率影響|超額利差的保護力依資產池表現而變動|保護力絕對固定|2
+車貸提前清償|完全不可能提前清償|相對房貸通常較不受利率變動影響|利率下降必然使所有車貸立即清償|只受房價影響|1
+APR|以回收率除失業率衡量|以提前還本金額相對原始本金衡量|以證券票息除車價衡量|以提前還本金額相對房屋市價衡量|1
+CPR 車貸|以剩餘本金為基礎衡量提前清償|以投資人數為分母|以證券發行費為分母|以原始汽車售價為唯一分母|0
+利率錯配|固定利率車貸支持浮動利率ABS 會產生利率風險|必然不需要避險|可完全消除所有市場風險|只會造成汽車折舊|0
+利率交換|可消除全部提前還款|可完全避免汽車事故|可保證借款人永不違約|可用於管理資產與證券負債的利率錯配|3
+備位服務機構|負責發行貨幣|確保汽車價格永不下降|取代所有債務人還款|主要服務機構無法履約時接手收款管理|3
+日盛車貸ABS|教材案例採兩階段架構並向海外投資人籌資|僅發行普通股|沒有特殊目的信託|資產池完全由房貸組成|0
+日盛案例信用增強|完全不設信用增強|只有政府全額保證|僅使用股票買回|教材列有10%次順位受益證券與5%準備金帳戶|3
+日盛案例匯率風險|不會受匯率影響|台幣資產與美元證券產生幣別錯配|只涉及汽車折舊|同幣別可消除所有信用風險|1
+NDF|可消除資產池所有違約|必然固定所有國家的利率|可保證車貸借款人按時還款|可用於管理不同幣別現金流的匯率風險|3
+車價暴跌|必然降低 LGD|可完全消除信用風險|車輛處分價值下降可能提高 LGD|使所有貸款本金消失|2
+信用卡應收帳款|房屋抵押權本身|持卡人消費或預借現金形成的應收款|汽車製造商普通股|國庫券利息|1
+循環信用餘額|已完全結清的帳款|銀行股東權益|房貸頭期款|持卡人未全額繳清而留存的應收本金|3
+信用卡 ABS資產|主要是30年固定房貸|只能是汽車租賃|主要是循環信用債權|必須是政府公債|2
+信用卡應收款特性|一定有房屋抵押權|必須每月等額攤還全部本金|現金流完全固定|通常為無擔保且非攤銷型資產|3
+信用卡信用增強|任何信用卡ABS 都由政府保證|不需要考慮壞帳|無擔保特性使信用增強格外重要|無擔保使信用風險為零|2
+循環期|禁止新增應收帳款|每期將所有本金立即還給投資人|本金回收款可用來購入新的信用卡應收帳款|只支付股利不支付利息|2
+攤還期|將所有現金流轉為普通股|將本金回收款依契約用於償還投資人|持續無限制購入新帳款而不還本|禁止支付投資人本金|1
+循環期目的|讓短期循環債權支持較長期限證券|取消信用卡循環利息|保證所有持卡人不違約|保證市場利率固定|0
+Master Trust|可支持多系列信用卡ABS的信託架構|不得持有應收帳款|必須每月清算全部資產|只能發行一張股票|0
+Seller's Interest|必然是第三方保險|一定是無風險國庫券|代表出售者在信託資產池中保留的權益|必然等同第一損失C組證券|2
+Investor's Interest|必然等同發卡銀行普通股|不受資產池現金流影響|代表投資人對信託資產池的權益|只能是服務費收入|2
+轉付結構|必須發行股票|到期前不得支付任何本金|每期本金必定為零|依約定比例轉付資產池回收本金|3
+管制攤銷|每期本金必須全額支付|只能用於房貸|按事先安排的期間逐步償還本金|本金永遠不償還|2
+一次付清|每月本金一定相同|在約定到期日集中償還本金|本金只用來買股票|永遠不償還本金|1
+一次付清風險|保證市場利率不變|完全沒有信用損失可能|到期時須備妥足額本金支付投資人|保證沒有流動性風險|2
+超額利差|等於發行證券的面額|等於全部信用卡額度|信用卡帳款收益扣除證券成本與費用後的緩衝|等於房屋市價|2
+提前攤還|保證證券票息增加|延長循環期且永不還本|自動消除所有壞帳|觸發事件發生時可提前停止循環並償還本金|3
+壞帳率提高|與現金流無關|保證ABS價格上漲|可能侵蝕超額利差與信用增強緩衝|必然提高超額利差|2
+信用卡盜刷|使所有帳款變成房貸|可能提高損失並影響應收款現金流|保證利息收入增加|完全不涉及信用風險|1
+C組證券|只能是普通股|一定比A組優先|通常屬次順位並先於優先類組吸收損失|完全沒有信用風險|2
+C組信用增強|C組完全不影響其他類組|C組保證不會虧損|A組必須先吸收全部損失|次順位C組可為A與B組提供損失緩衝|3
+業主信託|可持有特定次順位權益並發行證券籌資|等同中央銀行|必須直接發行國庫券|必然消除所有信用風險|0
+C組公開發行|自動增加資產池收益|可將次順位風險移轉給外部投資人|保證C組零損失|保證創始機構仍持有全部風險|1
+Seller's Interest與C組|出售者權益必然由政府持有|出售者保留權益不必然等同次順位C組|兩者在所有交易中必然相同|C組必然沒有信用風險|1
+投資人權益比|壞帳率除以車價|信託資產除以票面利率|發行費用除以信用卡額度|發行金額除以信託資產總額|3
+循環期本金使用|本金收回後通常可再投資於新應收款|不得再購入新債權|全部立即分配為投資人利息|全部直接作為創始機構股利|0
+失業率上升|使信用卡變為有擔保債權|保證信用卡收入增加|可能提高信用卡違約率並降低超額利差|必然降低違約率|2
+超額利差下降|可能成為提前攤還風險訊號|使所有證券自動升評|必然表示信用風險消失|保證循環期延長|0
+信用卡ABS與車貸ABS|信用卡帳款較偏循環非攤銷而車貸通常逐期攤還|兩者均必須到期一次還本|兩者都必須由房屋抵押|兩者都不可能提前還本|0`.trim().split('\n').map(line => line.split('|'));
+
+// 情境題與證照題之選項排列映射 (100% 還原考卷 1-250 題順序與選項位置)
+const p1 = ["0123","1023","3021","1023","1032","3021","3120","0132","0321","3210","0321","3102","2013","2031","2103","2103","0132","0312","3102","1230","3201","2130","1320","0123","3102","3120","1230","0132","0213","0321","3210","1203"];
+const p2 = ["2310","3102","2301","1032","2013","1302","2130","0123","1302","1032","2130","2130","3120","3120","0231","2103","1302","1023","1230","3120","3201","0123","1230","3012","1032","3102","2031","0312","3012","1302","1023","2130","3210","0123","1302","2310","0213","2103","3120"];
+const p3 = ["2310","3021","1203","0132","3012","0132","1230"];
+const p4 = ["0213","0132","2103","1032","3102","1023","2130","1302","2013","3021","1320","1023","1203","0321","0132","0312","2130","1302","1320","3120","1203","3102","0213"];
+const p5 = ["0132","3120","2310","1230","3201","0213","1032","1320","2301","1320","1302","0231","3120","0321","1302","3210","3201","2103","0321","2031","3102"];
+
+// 建立完整 250 題陣列
+const allQuestions = [];
+for (let q = 1; q <= 250; q++) {
+    let bIdx = 0, tpl = 0, perm = "0123", ch = "";
+    if (q <= 32) { bIdx = q - 1; tpl = 0; perm = "0123"; ch = "基礎與法規"; }
+    else if (q <= 64) { bIdx = q - 33; tpl = 1; perm = p1[q - 33]; ch = "基礎與法規"; }
+    else if (q === 65) { bIdx = 0; tpl = 2; perm = "1230"; ch = "基礎與法規"; }
+    else if (q <= 104) { bIdx = q - 34; tpl = 0; perm = "0123"; ch = "房貸與 MBS"; }
+    else if (q <= 143) { bIdx = q - 73; tpl = 1; perm = p2[q - 105]; ch = "房貸與 MBS"; }
+    else if (q <= 150) { bIdx = q - 112; tpl = 2; perm = p3[q - 144]; ch = "房貸與 MBS"; }
+    else if (q <= 177) { bIdx = q - 80; tpl = 0; perm = "0123"; ch = "汽車 ABS"; }
+    else if (q <= 200) { bIdx = q - 107; tpl = 1; perm = p4[q - 178]; ch = "汽車 ABS"; }
+    else if (q <= 229) { bIdx = q - 103; tpl = 0; perm = "0123"; ch = "信用卡 ABS"; }
+    else { bIdx = q - 132; tpl = 1; perm = p5[q - 230]; ch = "信用卡 ABS"; }
+
+    const base = rawBase[bIdx];
+    const topic = base[0];
+    const origOpts = [base[1], base[2], base[3], base[4]];
+    const origAns = parseInt(base[5], 10);
+
+    let qText = "";
+    if (tpl === 0) qText = `${q}. 關於「${topic}」，下列何者正確？`;
+    else if (tpl === 1) qText = `${q}. 某證券化交易涉及「${topic}」。依教材所述，以下哪一項判斷最適當？`;
+    else qText = `${q}. 證照考試情境：分析「${topic}」時，應採取下列何種觀念？`;
+
+    const opts = perm.split('').map(i => origOpts[parseInt(i, 10)]);
+    const ans = perm.indexOf(String(origAns));
+
+    allQuestions.push({
+        id: q,
+        ch: ch,
+        topic: topic,
+        q: qText,
+        opts: opts,
+        ans: ans,
+        correctText: origOpts[origAns]
+    });
+}
+
+// 狀態管理
+let activeList = [...allQuestions];
+let currentIdx = 0;
+let mode = 'quiz';
+let isShuffle = false;
+let autoNext = true;
+let correctCount = 0;
+let wrongSet = new Set(JSON.parse(localStorage.getItem('abs_wrong_set') || '[]'));
+
+function saveWrongSet() {
+    localStorage.setItem('abs_wrong_set', JSON.stringify([...wrongSet]));
+    updateWrongSelectLabel();
+}
+
+function updateWrongSelectLabel() {
+    const sel = document.getElementById('chapter-select');
+    sel.options[5].text = `📕 錯題本 / 待加強 (${wrongSet.size})`;
+    document.getElementById('score-text').innerText = `答對: ${correctCount} | 錯題本: ${wrongSet.size} 題`;
+}
+
+function setMode(m) {
+    mode = m;
+    document.getElementById('mode-quiz').classList.toggle('active', m === 'quiz');
+    document.getElementById('mode-card').classList.toggle('active', m === 'card');
+    document.getElementById('quiz-view').style.display = m === 'quiz' ? 'block' : 'none';
+    document.getElementById('card-view').style.display = m === 'card' ? 'block' : 'none';
+    renderCurrent();
+}
+
+function filterQuestions() {
+    const val = document.getElementById('chapter-select').value;
+    if (val === 'all') activeList = [...allQuestions];
+    else if (val === 'ch1') activeList = allQuestions.filter(x => x.id <= 65);
+    else if (val === 'ch2') activeList = allQuestions.filter(x => x.id >= 66 && x.id <= 150);
+    else if (val === 'ch3') activeList = allQuestions.filter(x => x.id >= 151 && x.id <= 200);
+    else if (val === 'ch4') activeList = allQuestions.filter(x => x.id >= 201);
+    else if (val === 'wrong') {
+        activeList = allQuestions.filter(x => wrongSet.has(x.id));
+        if (activeList.length === 0) {
+            alert('目前錯題本是空的喔！答錯的題目或單字卡標記「還不熟」會自動收錄在這裡。');
+            document.getElementById('chapter-select').value = 'all';
+            activeList = [...allQuestions];
+        }
+    }
+    if (isShuffle) shuffleArray(activeList);
+    currentIdx = 0;
+    renderCurrent();
+}
+
+function toggleShuffle() {
+    isShuffle = !isShuffle;
+    document.getElementById('btn-shuffle').classList.toggle('active-toggle', isShuffle);
+    filterQuestions();
+}
+
+function toggleAutoNext() {
+    autoNext = !autoNext;
+    document.getElementById('btn-auto').classList.toggle('active-toggle', autoNext);
+}
+
+function shuffleArray(arr) {
+    for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+}
+
+function jumpToQuestion(val) {
+    const qId = parseInt(val, 10);
+    if (!qId || qId < 1 || qId > 250) return;
+    const foundIdx = activeList.findIndex(x => x.id === qId);
+    if (foundIdx !== -1) {
+        currentIdx = foundIdx;
+        renderCurrent();
+    } else {
+        document.getElementById('chapter-select').value = 'all';
+        activeList = [...allQuestions];
+        currentIdx = qId - 1;
+        renderCurrent();
+    }
+}
+
+function renderCurrent() {
+    updateWrongSelectLabel();
+    const item = activeList[currentIdx];
+    const total = activeList.length;
+    document.getElementById('progress-text').innerText = `進度: ${currentIdx + 1} / ${total} (題號 #${item.id})`;
+    document.getElementById('progress-fill').style.width = `${((currentIdx + 1) / total) * 100}%`;
+
+    if (mode === 'quiz') {
+        document.getElementById('q-tag').innerText = `${item.ch} ｜ 考點：${item.topic}`;
+        document.getElementById('q-title').innerText = item.q;
+        const box = document.getElementById('opt-box');
+        box.innerHTML = '';
+        const fb = document.getElementById('feedback-box');
+        fb.style.display = 'none';
+
+        const labels = ['(A)', '(B)', '(C)', '(D)'];
+        item.opts.forEach((opt, idx) => {
+            const btn = document.createElement('button');
+            btn.className = 'opt-btn';
+            btn.innerText = `${labels[idx]} ${opt}`;
+            btn.onclick = () => selectAnswer(idx, btn);
+            box.appendChild(btn);
+        });
+    } else {
+        document.getElementById('fc-tag').innerText = `${item.ch} (#${item.id})`;
+        document.getElementById('fc-topic').innerText = item.topic;
+        document.getElementById('fc-q').innerText = item.q;
+        const ansEl = document.getElementById('fc-ans');
+        ansEl.innerText = `✅ ${item.correctText}`;
+        ansEl.style.display = 'none';
+        document.getElementById('fc-hint').innerText = '👆 點擊卡片翻面看正確定義（或按空白鍵）';
+    }
+}
+
+function selectAnswer(idx, btn) {
+    const item = activeList[currentIdx];
+    const btns = document.querySelectorAll('.opt-btn');
+    btns.forEach(b => b.disabled = true);
+
+    const fb = document.getElementById('feedback-box');
+    const labels = ['A', 'B', 'C', 'D'];
+
+    if (idx === item.ans) {
+        btn.classList.add('correct');
+        correctCount++;
+        wrongSet.delete(item.id);
+        saveWrongSet();
+        fb.innerHTML = `🎉 <b>答對了！</b> 核心觀念：【${item.topic}】→ ${item.correctText}`;
+        fb.style.display = 'block';
+        if (autoNext && currentIdx < activeList.length - 1) {
+            setTimeout(() => nextQ(), 650);
+        }
+    } else {
+        btn.classList.add('wrong');
+        btns[item.ans].classList.add('correct');
+        wrongSet.add(item.id);
+        saveWrongSet();
+        fb.innerHTML = `❌ <b>答錯了！已自動加入錯題本。</b><br>正確答案為 <b>(${labels[item.ans]}) ${item.correctText}</b>`;
+        fb.style.display = 'block';
+    }
+}
+
+function flipCard() {
+    const ansEl = document.getElementById('fc-ans');
+    const isHidden = ansEl.style.display === 'none';
+    ansEl.style.display = isHidden ? 'block' : 'none';
+    document.getElementById('fc-hint').innerText = isHidden ? '👇 選擇下方按鈕記錄熟練度' : '👆 點擊卡片翻面看正確定義（或按空白鍵）';
+}
+
+function markCard(known) {
+    const item = activeList[currentIdx];
+    if (known) {
+        wrongSet.delete(item.id);
+    } else {
+        wrongSet.add(item.id);
+    }
+    saveWrongSet();
+    nextQ();
+}
+
+function prevQ() {
+    if (currentIdx > 0) {
+        currentIdx--;
+        renderCurrent();
+    }
+}
+
+function nextQ() {
+    if (currentIdx < activeList.length - 1) {
+        currentIdx++;
+        renderCurrent();
+    } else {
+        alert('🎉 恭喜完成本輪練習！可以切換到「錯題本」複習剛剛答錯的題目喔！');
+    }
+}
+
+// 鍵盤快捷鍵支援
+document.addEventListener('keydown', (e) => {
+    if (document.activeElement.tagName === 'INPUT') return;
+    if (mode === 'quiz') {
+        const btns = document.querySelectorAll('.opt-btn');
+        if (btns.length === 4 && !btns[0].disabled) {
+            if (e.key === '1' || e.key.toLowerCase() === 'a') btns[0].click();
+            if (e.key === '2' || e.key.toLowerCase() === 'b') btns[1].click();
+            if (e.key === '3' || e.key.toLowerCase() === 'c') btns[2].click();
+            if (e.key === '4' || e.key.toLowerCase() === 'd') btns[3].click();
+        }
+        if (e.code === 'Space') { e.preventDefault(); nextQ(); }
+    } else {
+        if (e.code === 'Space') { e.preventDefault(); flipCard(); }
+    }
+    if (e.key === 'ArrowRight') nextQ();
+    if (e.key === 'ArrowLeft') prevQ();
+});
+
+window.onload = renderCurrent;
+</script>
+</body>
+</html>
